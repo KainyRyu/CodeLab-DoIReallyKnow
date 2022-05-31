@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
-import { Router } from 'react-router-dom';
+import { Router, useLocation } from 'react-router-dom';
 import '@testing-library/jest-dom';
 
 import Routes from '../../pages/Routes';
@@ -23,10 +23,23 @@ describe('<Routes />', () => {
     const history = createMemoryHistory();
     history.push('/');
 
+    const TestComponent = (): JSX.Element => {
+      const { pathname } = useLocation();
+      return (
+        <div>
+          <div>{pathname}</div>
+          <Routes />
+        </div>
+      );
+    };
+
     render(
       <Router location={history.location} navigator={history}>
-        <Routes />
+        <TestComponent />
       </Router>
     );
+
+    const pathName = screen.getByText('/');
+    expect(pathName).toBeInTheDocument();
   });
 });
